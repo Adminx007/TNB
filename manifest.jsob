@@ -1,0 +1,21 @@
+{
+    "name": "TNB - Temporary Number Bot",
+    "short_name": "TNB",
+    "description": "Get temporary numbers and OTP codes instantly",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#0A0A1A",
+    "theme_color": "#6C63FF",
+    "icons": [
+        {
+            "src": "https://via.placeholder.com/192x192/6C63FF/ffffff?text=TNB",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://via.placeholder.com/512x512/6C63FF/ffffff?text=TNB",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
