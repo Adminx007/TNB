@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNB - Temporary Number Bot</title>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ===== Splash Screen ===== -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <h1 class="splash-title">TNB</h1>
+            <p class="splash-subtitle">Temporary Number Bot</p>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Main App ===== -->
+    <div id="mainApp" style="display:none;">
+        
+        <!-- ===== Sidebar ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>TNB</span>
+                </div>
+                <button class="close-sidebar" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="numbers">
+                    <i class="fas fa-phone"></i>
+                    <span>My Numbers</span>
+                    <span class="badge" id="numberBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-page="referral">
+                    <i class="fas fa-gift"></i>
+                    <span>Referral</span>
+                    <span class="badge" id="refBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-page="history">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+                <a href="#" class="nav-item" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <img id="userAvatar" src="https://ui-avatars.com/api/?background=6C63FF&color=fff&bold=true" alt="User">
+                    <div>
+                        <p id="userName">User</p>
+                        <small id="userEmail">user@email.com</small>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- ===== Main Content ===== -->
+        <main class="main-content">
+            
+            <!-- Top Bar -->
+            <header class="topbar">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="topbar-left">
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <span class="page-subtitle">Welcome back!</span>
+                </div>
+                <div class="topbar-right">
+                    <div class="online-status">
+                        <span class="status-dot online"></span>
+                        <span>Online</span>
+                    </div>
+                    <button class="notif-btn" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-badge" id="notifBadge">0</span>
+                    </button>
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Pages -->
+            <div class="page-content">
+                
+                <!-- ===== DASHBOARD ===== -->
+                <div id="page-dashboard" class="page active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalNumbers">0</h3>
+                                <p>Active Numbers</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalCodes">0</h3>
+                                <p>OTP Received</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon gold">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalBalance">$0</h3>
+                                <p>Balance</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon pink">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalReferrals">0</h3>
+                                <p>Referrals</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-chart-line"></i> Activity</h3>
+                            </div>
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-chart-doughnut"></i> Platform Usage</h3>
+                            </div>
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="recent-activity">
+                        <div class="section-header">
+                            <h3><i class="fas fa-clock"></i> Recent OTPs</h3>
+                        </div>
+                        <div class="activity-list" id="recentCodes">
+                            <!-- Dynamic -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== NUMBERS ===== -->
+                <div id="page-numbers" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-phone"></i> My Numbers</h3>
+                            <span class="subtitle" id="numberCount">0 numbers</span>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn-primary" onclick="getNewNumber()">
+                                <i class="fas fa-plus"></i> Get New Number
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="numbers-grid" id="numbersGrid">
+                        <!-- Dynamic numbers -->
+                    </div>
+                </div>
+
+                <!-- ===== REFERRAL ===== -->
+                <div id="page-referral" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-gift"></i> Referral Program</h3>
+                            <span class="subtitle">Earn bonuses by inviting friends</span>
+                        </div>
+                    </div>
+
+                    <div class="referral-stats-grid">
+                        <div class="stat-mini">
+                            <span>Your Referral Code</span>
+                            <h4 id="refCode">LOADING</h4>
+                            <button class="btn-secondary btn-sm" onclick="copyRefCode()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Total Referrals</span>
+                            <h4 id="refTotal">0</h4>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Active Referrals</span>
+                            <h4 id="refActive">0</h4>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Total Bonus Earned</span>
+                            <h4 id="refBonus">$0</h4>
+                        </div>
+                    </div>
+
+                    <div class="referral-link-box">
+                        <h4>Share Your Referral Link</h4>
+                        <div class="link-box">
+                            <input type="text" id="refLink" readonly>
+                            <button onclick="copyRefLink()"><i class="fas fa-copy"></i></button>
+                            <button onclick="shareRefLink()"><i class="fas fa-share-alt"></i></button>
+                        </div>
+                        <p class="ref-info">You earn <strong id="refBonusRate">$0.50</strong> when your referral receives <strong id="refCodesRequired">3</strong> OTP codes!</p>
+                    </div>
+
+                    <div class="referral-history">
+                        <h4>Referral History</h4>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Bonus</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="refHistoryTable">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== HISTORY ===== -->
+                <div id="page-history" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-history"></i> OTP History</h3>
+                            <span class="subtitle">All codes you've received</span>
+                        </div>
+                        <div class="header-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search..." id="historySearch" oninput="searchHistory()">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Number</th>
+                                    <th>Service</th>
+                                    <th>Received</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTable">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ===== PROFILE ===== -->
+                <div id="page-profile" class="page">
+                    <div class="profile-container">
+                        <div class="profile-card">
+                            <div class="profile-avatar">
+                                <img id="profileAvatar" src="https://ui-avatars.com/api/?background=6C63FF&color=fff&bold=true&size=120" alt="Profile">
+                                <button class="btn-secondary btn-sm" onclick="changeAvatar()">
+                                    <i class="fas fa-camera"></i> Change
+                                </button>
+                            </div>
+                            <div class="profile-info">
+                                <h2 id="profileName">User Name</h2>
+                                <p id="profileEmail">user@email.com</p>
+                                <div class="profile-stats">
+                                    <div>
+                                        <span>Joined</span>
+                                        <strong id="profileJoined">N/A</strong>
+                                    </div>
+                                    <div>
+                                        <span>Total Codes</span>
+                                        <strong id="profileCodes">0</strong>
+                                    </div>
+                                    <div>
+                                        <span>Balance</span>
+                                        <strong id="profileBalance">$0</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-settings">
+                            <h4>Account Settings</h4>
+                            <div class="setting-item">
+                                <label>Display Name</label>
+                                <input type="text" id="editName" placeholder="Your name">
+                            </div>
+                            <div class="setting-item">
+                                <label>Email</label>
+                                <input type="email" id="editEmail" placeholder="Your email">
+                            </div>
+                            <button class="btn-primary" onclick="updateProfile()">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== Modals ===== -->
+    
+    <!-- Get Number Modal -->
+    <div id="getNumberModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:450px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Get New Number</h3>
+                <button class="close-modal" onclick="closeModal('getNumberModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Country</label>
+                    <select id="newCountry">
+                        <option value="Egypt">🇪🇬 Egypt</option>
+                        <option value="Saudi">🇸🇦 Saudi Arabia</option>
+                        <option value="UAE">🇦🇪 UAE</option>
+                        <option value="Kuwait">🇰🇼 Kuwait</option>
+                        <option value="Qatar">🇶🇦 Qatar</option>
+                        <option value="Bangladesh">🇧🇩 Bangladesh</option>
+                        <option value="India">🇮🇳 India</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Platform</label>
+                    <select id="newPlatform">
+                        <option value="WhatsApp">WhatsApp</option>
+                        <option value="Telegram">Telegram</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="Facebook">Facebook</option>
+                        <option value="TikTok">TikTok</option>
+                    </select>
+                </div>
+                <p class="info-text">You'll earn <strong id="newCodeBonus">$0.01</strong> for each OTP received!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('getNumberModal')">Cancel</button>
+                <button class="btn-success" onclick="requestNumber()">
+                    <i class="fas fa-check"></i> Get Number
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
