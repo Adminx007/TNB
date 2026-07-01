@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNB Admin Panel</title>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ===== Splash Screen ===== -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1 class="splash-title">TNB Admin</h1>
+            <p class="splash-subtitle">Control Panel</p>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Main Admin App ===== -->
+    <div id="mainApp" style="display:none;">
+        
+        <!-- ===== Sidebar ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>TNB Admin</span>
+                </div>
+                <button class="close-sidebar" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                    <span class="badge">Live</span>
+                </a>
+                <a href="#" class="nav-item" data-page="users">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                    <span class="badge" id="userBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-page="numbers">
+                    <i class="fas fa-phone"></i>
+                    <span>Numbers</span>
+                    <span class="badge" id="numberBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-page="codes">
+                    <i class="fas fa-key"></i>
+                    <span>OTP Codes</span>
+                    <span class="badge" id="codeBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-page="referrals">
+                    <i class="fas fa-gift"></i>
+                    <span>Referrals</span>
+                </a>
+                <a href="#" class="nav-item" data-page="withdrawals">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Withdrawals</span>
+                    <span class="badge danger" id="wdBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-page="panels">
+                    <i class="fas fa-server"></i>
+                    <span>SMS Panels</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#" class="nav-item" data-page="backup">
+                    <i class="fas fa-database"></i>
+                    <span>Backup</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <img id="adminAvatar" src="https://ui-avatars.com/api/?background=6C63FF&color=fff&bold=true" alt="Admin">
+                    <div>
+                        <p id="adminName">Admin</p>
+                        <small id="adminEmail">admin@example.com</small>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- ===== Main Content ===== -->
+        <main class="main-content">
+            
+            <!-- Top Bar -->
+            <header class="topbar">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="topbar-left">
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <span class="page-subtitle">Admin Overview</span>
+                </div>
+                <div class="topbar-right">
+                    <div class="online-status">
+                        <span class="status-dot online"></span>
+                        <span>Online</span>
+                    </div>
+                    <button class="notif-btn" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-badge" id="notifBadge">0</span>
+                    </button>
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="refresh-btn" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Pages -->
+            <div class="page-content">
+                
+                <!-- ===== DASHBOARD ===== -->
+                <div id="page-dashboard" class="page active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statUsers">0</h3>
+                                <p>Total Users</p>
+                            </div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> <span id="userGrowth">0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statCodes">0</h3>
+                                <p>Total Codes</p>
+                            </div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> <span id="codeGrowth">0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon gold">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statRevenue">$0</h3>
+                                <p>Total Revenue</p>
+                            </div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> <span id="revenueGrowth">0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon pink">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statReferrals">0</h3>
+                                <p>Active Referrals</p>
+                            </div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> <span id="refGrowth">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-chart-line"></i> Activity Overview</h3>
+                                <select id="chartFilter" onchange="updateChart()">
+                                    <option value="7">Last 7 Days</option>
+                                    <option value="14">Last 14 Days</option>
+                                    <option value="30">Last 30 Days</option>
+                                </select>
+                            </div>
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-chart-doughnut"></i> Platform Distribution</h3>
+                            </div>
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="recent-activity">
+                        <div class="section-header">
+                            <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                            <button class="view-all" onclick="loadAllActivity()">View All</button>
+                        </div>
+                        <div class="activity-list" id="activityList">
+                            <!-- Dynamic -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== USERS ===== -->
+                <div id="page-users" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-users"></i> User Management</h3>
+                            <span class="subtitle" id="userCount">0 users</span>
+                        </div>
+                        <div class="header-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search users..." id="userSearch" oninput="searchUsers()">
+                            </div>
+                            <button class="btn-primary" onclick="exportUsers()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn-secondary" onclick="addUser()">
+                                <i class="fas fa-plus"></i> Add User
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Codes</th>
+                                    <th>Balance</th>
+                                    <th>Referrals</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ===== NUMBERS ===== -->
+                <div id="page-numbers" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-phone"></i> Number Management</h3>
+                            <span class="subtitle" id="numberCount">0 numbers</span>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn-primary" onclick="showAddNumber()">
+                                <i class="fas fa-plus"></i> Add Numbers
+                            </button>
+                            <button class="btn-secondary" onclick="refreshNumbers()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filters-bar">
+                        <select id="countryFilter" onchange="filterNumbers()">
+                            <option value="all">All Countries</option>
+                            <option value="Egypt">🇪🇬 Egypt</option>
+                            <option value="Saudi">🇸🇦 Saudi</option>
+                            <option value="UAE">🇦🇪 UAE</option>
+                            <option value="Bangladesh">🇧🇩 Bangladesh</option>
+                        </select>
+                        <select id="platformFilter" onchange="filterNumbers()">
+                            <option value="all">All Platforms</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="Telegram">Telegram</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="Facebook">Facebook</option>
+                        </select>
+                        <select id="statusFilter" onchange="filterNumbers()">
+                            <option value="all">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="assigned">Assigned</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Number</th>
+                                    <th>Country</th>
+                                    <th>Platform</th>
+                                    <th>Status</th>
+                                    <th>User</th>
+                                    <th>Added</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="numbersTable">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ===== OTP CODES ===== -->
+                <div id="page-codes" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-key"></i> OTP Codes</h3>
+                            <span class="subtitle" id="codeCount">0 codes</span>
+                        </div>
+                        <div class="header-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search codes..." id="codeSearch" oninput="searchCodes()">
+                            </div>
+                            <select id="codeStatusFilter" onchange="filterCodes()">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="used">Used</option>
+                                <option value="expired">Expired</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Number</th>
+                                    <th>Service</th>
+                                    <th>Received</th>
+                                    <th>Status</th>
+                                    <th>User</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="codesTable">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ===== REFERRALS ===== -->
+                <div id="page-referrals" class="page">
+                    <div class="page-header">
