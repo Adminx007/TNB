@@ -374,3 +374,521 @@
                 <!-- ===== REFERRALS ===== -->
                 <div id="page-referrals" class="page">
                     <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-gift"></i> Referral System</h3>
+                            <span class="subtitle">Track referral performance</span>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn-success" onclick="addReferralBonus()">
+                                <i class="fas fa-gift"></i> Add Bonus
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="referral-stats-grid">
+                        <div class="stat-mini">
+                            <span>Total Referrals</span>
+                            <h4 id="refTotal">0</h4>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Active Referrals</span>
+                            <h4 id="refActive">0</h4>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Total Bonus Given</span>
+                            <h4 id="refBonus">$0</h4>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Conversion Rate</span>
+                            <h4 id="refRate">0%</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Referrer</th>
+                                    <th>Referred User</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Bonus</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="referralsTable">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ===== WITHDRAWALS ===== -->
+                <div id="page-withdrawals" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-credit-card"></i> Withdrawal Management</h3>
+                            <span class="subtitle" id="wdCount">0 pending</span>
+                        </div>
+                        <div class="header-actions">
+                            <select id="wdFilter" onchange="filterWithdrawals()">
+                                <option value="all">All Requests</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="withdrawal-stats-grid">
+                        <div class="stat-mini">
+                            <span>Pending</span>
+                            <h4 id="wdPending">0</h4>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Approved</span>
+                            <h4 id="wdApproved">0</h4>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Rejected</span>
+                            <h4 id="wdRejected">0</h4>
+                        </div>
+                        <div class="stat-mini">
+                            <span>Total Amount</span>
+                            <h4 id="wdTotal">$0</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Details</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withdrawalsTable">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ===== SMS PANELS ===== -->
+                <div id="page-panels" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-server"></i> SMS Panels</h3>
+                            <span class="subtitle">Monitor all connected panels</span>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn-primary" onclick="addPanel()">
+                                <i class="fas fa-plus"></i> Add Panel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panels-grid" id="panelsGrid">
+                        <!-- Dynamic -->
+                    </div>
+                </div>
+
+                <!-- ===== SETTINGS ===== -->
+                <div id="page-settings" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-cog"></i> Settings</h3>
+                            <span class="subtitle">Configure your bot</span>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-tabs">
+                        <button class="tab-btn active" data-tab="general" onclick="switchTab('general')">
+                            <i class="fas fa-sliders-h"></i> General
+                        </button>
+                        <button class="tab-btn" data-tab="referral" onclick="switchTab('referral')">
+                            <i class="fas fa-gift"></i> Referral
+                        </button>
+                        <button class="tab-btn" data-tab="panels" onclick="switchTab('panels')">
+                            <i class="fas fa-server"></i> Panels
+                        </button>
+                        <button class="tab-btn" data-tab="security" onclick="switchTab('security')">
+                            <i class="fas fa-shield-alt"></i> Security
+                        </button>
+                    </div>
+                    
+                    <div id="tab-general" class="tab-content active">
+                        <div class="settings-grid">
+                            <div class="settings-card">
+                                <h4>Bot Configuration</h4>
+                                <div class="setting-item">
+                                    <label>Bot Token</label>
+                                    <div class="setting-input-group">
+                                        <input type="password" id="botToken">
+                                        <button onclick="toggleVisibility('botToken')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="setting-item">
+                                    <label>Admin ID</label>
+                                    <input type="text" id="adminId">
+                                </div>
+                                <div class="setting-item">
+                                    <label>OTP Group ID</label>
+                                    <input type="text" id="otpGroupId">
+                                </div>
+                                <button class="btn-primary" onclick="saveSettings()">
+                                    <i class="fas fa-save"></i> Save Settings
+                                </button>
+                            </div>
+                            
+                            <div class="settings-card">
+                                <h4>Bot Status</h4>
+                                <div class="status-item">
+                                    <span>Bot Status</span>
+                                    <span class="status-badge online" id="botStatus">Online</span>
+                                </div>
+                                <div class="status-item">
+                                    <span>Uptime</span>
+                                    <span id="botUptime">00:00:00</span>
+                                </div>
+                                <div class="status-item">
+                                    <span>Active Users</span>
+                                    <span id="botActiveUsers">0</span>
+                                </div>
+                                <button class="btn-danger" onclick="restartBot()">
+                                    <i class="fas fa-power-off"></i> Restart Bot
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="tab-referral" class="tab-content">
+                        <div class="settings-card">
+                            <h4>Referral System Settings</h4>
+                            <div class="setting-item">
+                                <label>Code Bonus ($)</label>
+                                <input type="number" id="codeBonus" step="0.001">
+                            </div>
+                            <div class="setting-item">
+                                <label>Referral Bonus ($)</label>
+                                <input type="number" id="referralBonus" step="0.01">
+                            </div>
+                            <div class="setting-item">
+                                <label>Codes Required</label>
+                                <input type="number" id="codesRequired">
+                            </div>
+                            <div class="setting-item">
+                                <label>Min Withdrawal ($)</label>
+                                <input type="number" id="minWithdrawal" step="0.01">
+                            </div>
+                            <button class="btn-primary" onclick="saveReferralSettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="tab-panels" class="tab-content">
+                        <div class="settings-card">
+                            <h4>Panel Configuration</h4>
+                            <div id="panelSettings">
+                                <!-- Dynamic -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="tab-security" class="tab-content">
+                        <div class="settings-card">
+                            <h4>Security Settings</h4>
+                            <div class="setting-item">
+                                <label>Two-Factor Auth</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="twoFactor">
+                                    <label for="twoFactor"></label>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <label>Session Timeout</label>
+                                <select id="sessionTimeout">
+                                    <option value="30">30 minutes</option>
+                                    <option value="60" selected>1 hour</option>
+                                    <option value="120">2 hours</option>
+                                    <option value="480">8 hours</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" onclick="saveSecuritySettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </div>
+                                    </div>
+                                     <!-- ===== BACKUP ===== -->
+                <div id="page-backup" class="page">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <h3><i class="fas fa-database"></i> Backup & Restore</h3>
+                            <span class="subtitle">Manage your data backups</span>
+                        </div>
+                    </div>
+                    
+                    <div class="backup-grid">
+                        <div class="backup-card">
+                            <div class="backup-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <h4>Create Backup</h4>
+                            <p>Export all data including users, codes, and settings</p>
+                            <button class="btn-success" onclick="createBackup()">
+                                <i class="fas fa-download"></i> Download Backup
+                            </button>
+                        </div>
+                        
+                        <div class="backup-card">
+                            <div class="backup-icon">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <h4>Restore Backup</h4>
+                            <p>Import a previously exported backup file</p>
+                            <button class="btn-primary" onclick="document.getElementById('restoreInput').click()">
+                                <i class="fas fa-upload"></i> Restore Backup
+                            </button>
+                            <input type="file" id="restoreInput" accept=".json,.zip" style="display:none" onchange="restoreBackup(event)">
+                        </div>
+                        
+                        <div class="backup-card">
+                            <div class="backup-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h4>Backup History</h4>
+                            <p>View all previous backups</p>
+                            <button class="btn-secondary" onclick="loadBackupHistory()">
+                                <i class="fas fa-list"></i> View History
+                            </button>
+                        </div>
+                        
+                        <div class="backup-card">
+                            <div class="backup-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h4>Auto Backup</h4>
+                            <p>Schedule automatic backups</p>
+                            <div class="setting-item" style="border:none;padding:0;">
+                                <label>Frequency</label>
+                                <select id="autoBackupFreq">
+                                    <option value="disabled">Disabled</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" onclick="saveAutoBackup()">
+                                <i class="fas fa-save"></i> Save Schedule
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="backup-history">
+                        <h4>Recent Backups</h4>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Size</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="backupHistoryTable">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== Modals ===== -->
+    
+    <!-- Add Number Modal -->
+    <div id="addNumberModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Add Numbers</h3>
+                <button class="close-modal" onclick="closeModal('addNumberModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Country</label>
+                    <select id="addCountry">
+                        <option value="Egypt">🇪🇬 Egypt</option>
+                        <option value="Saudi">🇸🇦 Saudi Arabia</option>
+                        <option value="UAE">🇦🇪 UAE</option>
+                        <option value="Kuwait">🇰🇼 Kuwait</option>
+                        <option value="Qatar">🇶🇦 Qatar</option>
+                        <option value="Bangladesh">🇧🇩 Bangladesh</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Platform</label>
+                    <select id="addPlatform">
+                        <option value="WhatsApp">WhatsApp</option>
+                        <option value="Telegram">Telegram</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="Facebook">Facebook</option>
+                        <option value="TikTok">TikTok</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Upload File</label>
+                    <div class="file-drop" id="fileDrop">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop or click to upload</p>
+                        <span>Supported: .txt, .csv</span>
+                        <input type="file" id="numberFile" accept=".txt,.csv" onchange="handleFileUpload(event)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Or Paste Numbers</label>
+                    <textarea id="numberPaste" placeholder="+20123456789&#10;+20198765432" rows="5"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('addNumberModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveNumbers()">
+                    <i class="fas fa-save"></i> Save Numbers
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> Edit User</h3>
+                <button class="close-modal" onclick="closeModal('editUserModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label>User ID</label>
+                    <input type="text" id="editUserDisplayId" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="editUserName">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="editUserEmail">
+                </div>
+                <div class="form-group">
+                    <label>Balance ($)</label>
+                    <input type="number" id="editUserBalance" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="editUserStatus">
+                        <option value="active">Active</option>
+                        <option value="banned">Banned</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="editUserNotes" rows="3" placeholder="Add notes..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-danger" onclick="deleteUser()">
+                    <i class="fas fa-trash"></i> Delete User
+                </button>
+                <button class="btn-secondary" onclick="closeModal('editUserModal')">Cancel</button>
+                <button class="btn-primary" onclick="updateUser()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Panel Modal -->
+    <div id="addPanelModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-server"></i> Add SMS Panel</h3>
+                <button class="close-modal" onclick="closeModal('addPanelModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Panel Name</label>
+                    <input type="text" id="panelName" placeholder="e.g., Group Panel">
+                </div>
+                <div class="form-group">
+                    <label>Base URL</label>
+                    <input type="text" id="panelBaseUrl" placeholder="http://139.99.63.204">
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="panelUsername" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="panelPassword" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label>Check Interval (seconds)</label>
+                    <input type="number" id="panelInterval" value="5">
+                </div>
+                <div class="form-group">
+                    <label>Timeout (seconds)</label>
+                    <input type="number" id="panelTimeout" value="30">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="panelEnabled" checked>
+                        Enable Panel
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('addPanelModal')">Cancel</button>
+                <button class="btn-primary" onclick="savePanel()">
+                    <i class="fas fa-save"></i> Add Panel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button class="close-notif" onclick="closeNotifications()">&times;</button>
+        </div>
+        <div class="notification-list" id="notificationList">
+            <div class="notification-empty">
+                <i class="fas fa-bell-slash"></i>
+                <p>No notifications</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+    <script src="admin-script.js"></script>
+</body>
+</html>
