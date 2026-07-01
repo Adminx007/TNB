@@ -677,4 +677,4 @@ window.updateProfile = updateProfile;
 window.changeAvatar = changeAvatar;
 window.showNotifications = showNotifications;
 window.closeNotifications = closeNotifications;
-window.showToast = showToast;updatin
+window.showToast = showToast;
